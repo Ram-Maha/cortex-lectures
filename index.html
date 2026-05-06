@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cortex Lectures — Department of Cognitive & Brain Sciences</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ede1;
+    --paper-deep: #ebe3d3;
+    --ink: #16110d;
+    --ink-soft: #463d33;
+    --ink-faint: #8a8073;
+    --rule: #c8bfae;
+    --accent: #8b2a1a;
+    --accent-soft: #b85a48;
+    --highlight: #d4b896;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(139, 42, 26, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(22, 17, 13, 0.05) 0%, transparent 50%);
+  }
+
+  /* Subtle paper grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.05 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ============ INSTITUTE BANNER ============ */
+  .institute-banner {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 3;
+  }
+
+  .institute-banner .banner-dot {
+    color: var(--highlight);
+    margin: 0 12px;
+    letter-spacing: 0;
+  }
+
+  .institute-banner .banner-short {
+    display: none;
+  }
+
+  /* ============ HEADER ============ */
+  header {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .header-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .dept-mark {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .dept-mark span {
+    color: var(--accent);
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+  }
+
+  nav a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  nav a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .subscribe-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 10px 16px;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .subscribe-link:hover {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  /* ============ CALENDAR DROPDOWN ============ */
+  .cal-button-wrapper {
+    position: relative;
+  }
+
+  .cal-trigger {
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .cal-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 260px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    box-shadow: 0 12px 32px rgba(22, 17, 13, 0.12);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    z-index: 100;
+  }
+
+  .cal-dropdown.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .cal-dropdown-header {
+    padding: 14px 18px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cal-option {
+    display: block;
+    padding: 14px 18px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.2s, padding 0.2s;
+    cursor: pointer;
+  }
+
+  .cal-option:last-child {
+    border-bottom: none;
+  }
+
+  .cal-option:hover {
+    background: var(--paper-deep);
+    padding-left: 22px;
+  }
+
+  .cal-option-name {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .cal-option-meta {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    padding: 80px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+
+  .hero-title-block {
+    position: relative;
+  }
+
+  .series-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .series-eyebrow::before {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 144, 'SOFT' 80;
+    font-weight: 400;
+    font-size: clamp(64px, 9vw, 132px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 24;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+    margin-top: 24px;
+    max-width: 480px;
+    line-height: 1.4;
+  }
+
+  .hero-meta {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 480px;
+  }
+
+  .hero-meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .hero-meta-item strong {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 36;
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: -0.01em;
+    margin-top: 6px;
+  }
+
+  /* ============ FEATURED TALK ============ */
+  .featured-talk {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 44px;
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .featured-talk::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--accent);
+  }
+
+  .featured-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--highlight);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .featured-eyebrow .pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
+
+  .featured-date {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 60;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--highlight);
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+  }
+
+  .featured-title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 60, 'SOFT' 60;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.015em;
+  }
+
+  .featured-speaker {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--paper);
+    opacity: 0.85;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .featured-speaker strong {
+    font-weight: 500;
+  }
+
+  .featured-details {
+    display: flex;
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(243, 237, 225, 0.2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    opacity: 0.7;
+  }
+
+  /* ============ NEURAL DECORATION ============ */
+  .neural-decoration {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ============ SECTION HEADERS ============ */
+  .section-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: 56px;
+    padding-top: 80px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 72, 'SOFT' 50;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .section-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: right;
+  }
+
+  /* ============ UPCOMING TALKS GRID ============ */
+  .upcoming-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+  }
+
+  .talk-card {
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 32px 28px 36px;
+    background: transparent;
+    position: relative;
+    transition: background 0.4s;
+    cursor: pointer;
+  }
+
+  .talk-card:hover {
+    background: var(--paper-deep);
+  }
+
+  .talk-card:hover .talk-arrow {
+    transform: translateX(6px);
+    color: var(--accent);
+  }
+
+  .talk-date-block {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .talk-day {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 72;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  .talk-month-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .talk-month-year span {
+    display: block;
+  }
+
+  .talk-title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.18;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+    min-height: 78px;
+  }
+
+  .talk-speaker {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .talk-speaker strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .talk-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px dashed var(--rule);
+  }
+
+  .talk-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .talk-arrow {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    color: var(--ink-soft);
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  /* ============ ABOUT SECTION ============ */
+  /* ============ IN-FOCUS / SPOTLIGHT ============ */
+  .in-focus {
+    background: var(--paper-deep);
+    margin: 80px -32px 0;
+    padding: 96px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+
+  .in-focus-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .in-focus-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .in-focus-eyebrow::before {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .in-focus-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .in-focus-meta {
+    position: sticky;
+    top: 32px;
+  }
+
+  .in-focus-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+
+  .in-focus-title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 96, 'SOFT' 60;
+    font-weight: 400;
+    font-size: 42px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 36px;
+  }
+
+  .in-focus-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .in-focus-speaker-block {
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+
+  .in-focus-speaker-name {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 36;
+    font-weight: 500;
+    font-size: 22px;
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+  }
+
+  .in-focus-speaker-affil {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  .in-focus-content {
+    max-width: 640px;
+  }
+
+  .in-focus-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+    margin-top: 40px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .in-focus-section-label:first-child {
+    margin-top: 0;
+  }
+
+  .in-focus-abstract {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 18;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .in-focus-abstract.placeholder {
+    font-style: italic;
+    color: var(--ink-faint);
+    padding: 20px 24px;
+    border-left: 2px solid var(--accent-soft);
+    background: rgba(139, 42, 26, 0.04);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .in-focus-bio {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  .about-section {
+    padding: 100px 0;
+    margin-top: 40px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .about-headline {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 96;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 42px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .about-body {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 14;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .about-body p {
+    margin-bottom: 20px;
+  }
+
+  .about-body p:first-letter {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 144;
+    font-weight: 500;
+    font-size: 64px;
+    float: left;
+    line-height: 0.85;
+    margin: 8px 12px 0 0;
+    color: var(--accent);
+  }
+
+  .suggest-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 16px;
+    padding: 16px 26px;
+    border: 1px solid var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    background: transparent;
+    transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
+  }
+
+  .suggest-cta:hover {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .suggest-cta-arrow {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .suggest-note {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-faint);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  /* ============ ARCHIVE ============ */
+  .archive-section {
+    padding-bottom: 100px;
+  }
+
+  .archive-list {
+    border-top: 1px solid var(--ink);
+  }
+
+  .archive-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 1.5fr 1fr 80px;
+    gap: 32px;
+    padding: 24px 8px;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+    transition: padding 0.3s, background 0.3s;
+    cursor: pointer;
+  }
+
+  .archive-row:hover {
+    padding-left: 16px;
+    background: var(--paper-deep);
+  }
+
+  .archive-row:hover .archive-arrow {
+    color: var(--accent);
+  }
+
+  .archive-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .archive-speaker {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 24;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+
+  .archive-affiliation {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+    letter-spacing: 0;
+  }
+
+  .archive-title-text {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 18;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.35;
+  }
+
+  .archive-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .archive-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 3px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+  }
+
+  .archive-arrow {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--ink-faint);
+    text-align: right;
+    transition: color 0.3s;
+  }
+
+  .archive-empty {
+    border-top: 1px solid var(--ink);
+    padding: 80px 32px;
+    text-align: center;
+  }
+
+  .archive-empty-mark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-variation-settings: 'opsz' 144;
+    font-weight: 300;
+    font-size: 96px;
+    color: var(--accent);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  .archive-empty-title {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 36;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 26px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: -0.005em;
+  }
+
+  .archive-empty-body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ============ SUBSCRIBE ============ */
+  .subscribe-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 100px 0;
+    margin: 80px -32px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .subscribe-grid {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .subscribe-headline {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 96, 'SOFT' 60;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+
+  .subscribe-headline em {
+    font-style: italic;
+    color: var(--highlight);
+  }
+
+  .subscribe-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .subscribe-form-row {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(243, 237, 225, 0.4);
+    padding-bottom: 12px;
+  }
+
+  .subscribe-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    padding: 8px 0;
+    outline: none;
+  }
+
+  .subscribe-input::placeholder {
+    color: rgba(243, 237, 225, 0.5);
+    font-style: italic;
+  }
+
+  .subscribe-submit {
+    background: transparent;
+    border: none;
+    color: var(--highlight);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 8px 0 8px 16px;
+    transition: color 0.3s;
+  }
+
+  .subscribe-submit:hover {
+    color: var(--paper);
+  }
+
+  .subscribe-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: rgba(243, 237, 225, 0.5);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* Decorative neural lines for subscribe */
+  .neural-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    padding: 64px 0 48px;
+    border-top: 1px solid var(--rule);
+    margin-top: 0;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 36;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    margin-bottom: 16px;
+  }
+
+  .footer-tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 280px;
+    line-height: 1.5;
+  }
+
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-col a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer-col a:hover {
+    color: var(--accent);
+  }
+
+  .footer-bottom {
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ============ ANIMATIONS ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero h1, .hero-subtitle, .hero-meta, .featured-talk {
+    animation: fadeUp 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+  .hero h1 { animation-delay: 0.05s; }
+  .hero-subtitle { animation-delay: 0.18s; }
+  .hero-meta { animation-delay: 0.3s; }
+  .featured-talk { animation-delay: 0.4s; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px) {
+    .container { padding: 0 20px; }
+    .header-grid { grid-template-columns: 1fr auto; }
+    nav { display: none; }
+    .institute-banner { font-size: 9px; letter-spacing: 0.22em; padding: 8px 12px; }
+    .institute-banner .banner-full { display: none; }
+    .institute-banner .banner-short { display: inline; }
+    .institute-banner .banner-dot { margin: 0 8px; }
+    .cal-dropdown { min-width: 220px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 56px; }
+    .hero { padding: 48px 0 64px; }
+    .upcoming-grid { grid-template-columns: 1fr; }
+    .in-focus { padding: 56px 0; margin: 56px -20px 0; }
+    .in-focus-grid { grid-template-columns: 1fr; gap: 40px; }
+    .in-focus-meta { position: static; }
+    .in-focus-title { font-size: 32px; }
+    .about-grid { grid-template-columns: 1fr; gap: 32px; }
+    .archive-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 20px 8px;
+    }
+    .archive-tags { margin-top: 4px; }
+    .archive-arrow { display: none; }
+    .subscribe-grid { grid-template-columns: 1fr; gap: 40px; }
+    .subscribe-headline { font-size: 36px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .section-header { grid-template-columns: 1fr; gap: 16px; }
+    .section-meta { text-align: left; }
+    .section-title { font-size: 40px; }
+    .about-headline { font-size: 28px; }
+    .footer-bottom { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="institute-banner">
+  <span class="banner-full">Indian Institute of Technology <span class="banner-dot">·</span> Gandhinagar</span>
+  <span class="banner-short">IIT <span class="banner-dot">·</span> Gandhinagar</span>
+</div>
+
+<header>
+  <div class="container">
+    <div class="header-grid">
+      <div class="dept-mark">
+        Dept. of Cognitive &amp;<br>Brain Sciences <span>—</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#upcoming">Upcoming</a></li>
+          <li><a href="#about">About the Series</a></li>
+          <li><a href="#archive">Archive</a></li>
+          <li><a href="#subscribe">Subscribe</a></li>
+        </ul>
+      </nav>
+      <div class="cal-button-wrapper">
+        <button id="cal-button" class="subscribe-link cal-trigger" aria-haspopup="true" aria-expanded="false">
+          Add to Calendar ↗
+        </button>
+        <div id="cal-dropdown" class="cal-dropdown" role="menu">
+          <div class="cal-dropdown-header">Inaugural · 12 May 2026</div>
+          <a class="cal-option" data-cal="google" role="menuitem">
+            <span class="cal-option-name">Google Calendar</span>
+            <span class="cal-option-meta">Opens in new tab</span>
+          </a>
+          <a class="cal-option" data-cal="ics" role="menuitem">
+            <span class="cal-option-name">Apple · Outlook · Other</span>
+            <span class="cal-option-meta">Downloads .ics file</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-title-block">
+        <div class="series-eyebrow">A Departmental Lecture Series — Inaugural Season</div>
+        <h1>The Cortex<br><em>Lectures</em></h1>
+        <p class="hero-subtitle">Conversations on mind, brain, and behavior — twice monthly throughout the academic year.</p>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            Inaugural Season
+            <strong>2026</strong>
+          </div>
+          <div class="hero-meta-item">
+            Lectures This Year
+            <strong>8+</strong>
+          </div>
+          <div class="hero-meta-item">
+            Disciplines Bridged
+            <strong>6</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="featured-talk">
+        <div class="featured-eyebrow">
+          <span class="pulse"></span>
+          Inaugural Lecture
+        </div>
+        <div class="featured-date">Tuesday, May 12, 2026 — 4:00 PM</div>
+        <h2 class="featured-title">XXXX</h2>
+        <p class="featured-speaker">
+          <strong>Speaker XXXX</strong> — Affiliation forthcoming
+        </p>
+        <div class="featured-details">
+          <span>Hall 204 · Bldg. C</span>
+          <span>·</span>
+          <span>Reception to follow</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="upcoming">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-num">§ 01 — Inaugural Season 2026 — 27</div>
+        <h2 class="section-title">Upcoming <em>Lectures</em></h2>
+      </div>
+      <div class="section-meta">
+        Updated weekly<br>
+        ↓ See full schedule
+      </div>
+    </div>
+
+    <div class="upcoming-grid">
+
+      <div class="talk-card">
+        <div class="talk-date-block">
+          <div class="talk-day">12</div>
+          <div class="talk-month-year">
+            <span>May</span>
+            <span>2026</span>
+          </div>
+        </div>
+        <h3 class="talk-title">XXXX</h3>
+        <p class="talk-speaker">
+          <strong>Speaker XXXX</strong><br>
+          Affiliation forthcoming
+        </p>
+        <div class="talk-footer">
+          <span class="talk-location">Hall 204 · 4 PM</span>
+          <span class="talk-arrow">→</span>
+        </div>
+      </div>
+
+      <div class="talk-card">
+        <div class="talk-date-block">
+          <div class="talk-day">—</div>
+          <div class="talk-month-year">
+            <span>Sep</span>
+            <span>2026</span>
+          </div>
+        </div>
+        <h3 class="talk-title" style="color: var(--ink-faint); font-style: italic;">Speaker to be announced</h3>
+        <p class="talk-speaker" style="color: var(--ink-faint);">
+          <em>Title and abstract forthcoming</em>
+        </p>
+        <div class="talk-footer">
+          <span class="talk-location">Hall 204 · 4 PM</span>
+          <span class="talk-arrow">→</span>
+        </div>
+      </div>
+
+      <div class="talk-card">
+        <div class="talk-date-block">
+          <div class="talk-day">—</div>
+          <div class="talk-month-year">
+            <span>Oct</span>
+            <span>2026</span>
+          </div>
+        </div>
+        <h3 class="talk-title" style="color: var(--ink-faint); font-style: italic;">Speaker to be announced</h3>
+        <p class="talk-speaker" style="color: var(--ink-faint);">
+          <em>Title and abstract forthcoming</em>
+        </p>
+        <div class="talk-footer">
+          <span class="talk-location">Hall 204 · 4 PM</span>
+          <span class="talk-arrow">→</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="in-focus">
+  <div class="in-focus-container">
+    <div class="in-focus-eyebrow">In Focus — The Inaugural Lecture</div>
+    <div class="in-focus-grid">
+      <div class="in-focus-meta">
+        <div class="in-focus-date">Tuesday · May 12, 2026 · 4:00 PM · Hall 204</div>
+        <h2 class="in-focus-title">Inaugural Lecture <em>—</em> Title XXXX</h2>
+        <div class="in-focus-speaker-block">
+          <div class="in-focus-speaker-name">Speaker XXXX</div>
+          <div class="in-focus-speaker-affil">
+            Affiliation and full title<br>
+            forthcoming upon confirmation
+          </div>
+        </div>
+      </div>
+      <div class="in-focus-content">
+        <div class="in-focus-section-label">About this Talk</div>
+        <p class="in-focus-abstract placeholder">
+          Speaker confirmation in progress. Full abstract, talk title, and biographical details will appear here once finalized.
+        </p>
+        <div class="in-focus-section-label">About the Speaker</div>
+        <p class="in-focus-bio">
+          Speaker biography forthcoming.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="about-label">§ 02 — About the Series</div>
+        <h2 class="about-headline">A gathering for those who study the most complicated three pounds of matter in the known universe.</h2>
+      </div>
+      <div class="about-body">
+        <p>The Cortex Lectures bring leading scientists in cognition, neuroscience, vision, multisensory perception, motor learning, language, and the philosophy of mind into conversation with our department roughly twice a month throughout the academic year. Every talk is open to students, faculty, and visiting researchers from across the university.</p>
+        <p>Our speakers are chosen by a rotating committee of graduate students and faculty. We deliberately balance computational and experimental, human and animal, theoretical and applied. The result is a series where you might encounter a single-cell electrophysiologist and a Bayesian modeler at the same coffee table afterward — which is exactly the point.</p>
+        <p>Recordings are archived (with speaker permission) and made available to the public. We welcome speaker suggestions from anyone in our community — students, postdocs, faculty, or visiting scholars.</p>
+        <a href="https://forms.gle/REPLACE-WITH-YOUR-FORM-URL" class="suggest-cta" target="_blank" rel="noopener">
+          Suggest a Speaker
+          <span class="suggest-cta-arrow">↗</span>
+        </a>
+        <div class="suggest-note">The form asks for a brief bio of the proposed speaker and your connection to them, if any. Submissions are not anonymous.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="archive" class="archive-section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-num">§ 03 — Past Talks</div>
+        <h2 class="section-title">The <em>Archive</em></h2>
+      </div>
+      <div class="section-meta">
+        Building since 2026<br>
+        Inaugural year
+      </div>
+    </div>
+
+    <div class="archive-empty">
+      <div class="archive-empty-mark">§</div>
+      <h3 class="archive-empty-title">The archive begins this fall.</h3>
+      <p class="archive-empty-body">
+        Recordings, slides, and abstracts from each lecture will be added here as the inaugural season progresses. Speakers who consent to recording will have their talks made openly available.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="subscribe" class="subscribe-section">
+  <svg class="neural-bg" viewBox="0 0 1440 400" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#f3ede1" stroke-width="0.5" fill="none">
+      <circle cx="200" cy="200" r="4" fill="#f3ede1"/>
+      <circle cx="500" cy="100" r="3" fill="#f3ede1"/>
+      <circle cx="800" cy="300" r="5" fill="#f3ede1"/>
+      <circle cx="1100" cy="150" r="3" fill="#f3ede1"/>
+      <circle cx="1300" cy="250" r="4" fill="#f3ede1"/>
+      <circle cx="350" cy="350" r="3" fill="#f3ede1"/>
+      <circle cx="650" cy="200" r="4" fill="#f3ede1"/>
+      <circle cx="950" cy="80" r="3" fill="#f3ede1"/>
+      <line x1="200" y1="200" x2="500" y2="100"/>
+      <line x1="500" y1="100" x2="800" y2="300"/>
+      <line x1="500" y1="100" x2="650" y2="200"/>
+      <line x1="800" y1="300" x2="1100" y2="150"/>
+      <line x1="800" y1="300" x2="350" y2="350"/>
+      <line x1="1100" y1="150" x2="1300" y2="250"/>
+      <line x1="1100" y1="150" x2="950" y2="80"/>
+      <line x1="650" y1="200" x2="800" y2="300"/>
+      <line x1="350" y1="350" x2="200" y2="200"/>
+      <line x1="950" y1="80" x2="500" y2="100"/>
+    </g>
+  </svg>
+  <div class="subscribe-grid">
+    <h2 class="subscribe-headline">Never miss a <em>lecture.</em></h2>
+    <div>
+      <form class="subscribe-form" onsubmit="event.preventDefault(); this.querySelector('.subscribe-note').textContent = '✓ subscribed. confirmation in your inbox.';">
+        <div class="subscribe-form-row">
+          <input type="email" class="subscribe-input" placeholder="your@iitgn.ac.in" required>
+          <button type="submit" class="subscribe-submit">Subscribe →</button>
+        </div>
+        <span class="subscribe-note">Weekly email · iCal feed available · Unsubscribe anytime</span>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">The Cortex Lectures</div>
+        <p class="footer-tagline">A weekly seminar series of the Department of Cognitive &amp; Brain Sciences.</p>
+      </div>
+      <div class="footer-col">
+        <h4>The Series</h4>
+        <ul>
+          <li><a href="#upcoming">Upcoming</a></li>
+          <li><a href="#archive">Archive</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#">Suggest a Speaker</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Department</h4>
+        <ul>
+          <li><a href="#">Faculty</a></li>
+          <li><a href="#">Research</a></li>
+          <li><a href="#">Graduate Program</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Bluesky</a></li>
+          <li><a href="#">YouTube Archive</a></li>
+          <li><a href="#">RSS</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 IIT Gandhinagar · Cognitive &amp; Brain Sciences</span>
+      <span>Series organized by Mahalakshmi R · mahalakshmi.r@iitgn.ac.in</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ============ ADD TO CALENDAR FUNCTIONALITY ============
+  // The inaugural Cortex Lecture: Tuesday, May 12, 2026 at 4:00 PM IST
+  // IST = UTC+5:30, so 4:00 PM IST = 10:30 UTC
+  // Talk + Q&A duration: 90 minutes (ends 5:30 PM IST = 12:00 UTC)
+
+  const cortexEvent = {
+    title: 'Cortex Lectures — Inaugural Lecture',
+    description: 'Inaugural lecture of the Cortex Lectures series. Speaker, title, and abstract to be announced. Reception to follow.\\n\\nHosted by the Department of Cognitive & Brain Sciences, IIT Gandhinagar.',
+    location: 'Hall 204, IIT Gandhinagar, Palaj, Gandhinagar 382055',
+    startUTC: '20260512T103000Z',
+    endUTC:   '20260512T120000Z',
+    uid: 'cortex-2026-05-12-inaugural@iitgn.ac.in'
+  };
+
+  const calButton = document.getElementById('cal-button');
+  const calDropdown = document.getElementById('cal-dropdown');
+
+  // Toggle dropdown on button click
+  calButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = calDropdown.classList.toggle('open');
+    calButton.setAttribute('aria-expanded', isOpen);
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!calButton.contains(e.target) && !calDropdown.contains(e.target)) {
+      calDropdown.classList.remove('open');
+      calButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Close dropdown on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      calDropdown.classList.remove('open');
+      calButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Build Google Calendar URL
+  function googleCalendarURL() {
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: cortexEvent.title,
+      dates: `${cortexEvent.startUTC}/${cortexEvent.endUTC}`,
+      details: cortexEvent.description.replace(/\\n/g, '\n'),
+      location: cortexEvent.location
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }
+
+  // Build & download .ics file
+  function downloadICS() {
+    const now = new Date();
+    const dtstamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+
+    // Escape commas and semicolons for ICS format
+    const esc = (s) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Cortex Lectures//IITGN//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${cortexEvent.uid}`,
+      `DTSTAMP:${dtstamp}`,
+      `DTSTART:${cortexEvent.startUTC}`,
+      `DTEND:${cortexEvent.endUTC}`,
+      `SUMMARY:${esc(cortexEvent.title)}`,
+      `DESCRIPTION:${esc(cortexEvent.description)}`,
+      `LOCATION:${esc(cortexEvent.location)}`,
+      'STATUS:CONFIRMED',
+      'BEGIN:VALARM',
+      'TRIGGER:-PT30M',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Cortex Lecture starts in 30 minutes',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cortex-inaugural-may-12.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }
+
+  // Wire up dropdown options
+  document.querySelectorAll('.cal-option').forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.preventDefault();
+      const type = option.dataset.cal;
+      if (type === 'google') {
+        window.open(googleCalendarURL(), '_blank', 'noopener');
+      } else if (type === 'ics') {
+        downloadICS();
+      }
+      calDropdown.classList.remove('open');
+      calButton.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
+
+</body>
+</html>
